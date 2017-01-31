@@ -1,0 +1,53 @@
+.article-body {
+  padding-bottom: 1.5rem;
+}
+
+.article-author {
+  color: var(--metac);
+}
+
+.article-author::before {
+  content: 'by ';
+}
+
+.article-date {
+  color: var(--metac);
+}
+
+.article-date::before {
+  content: 'Posted on ';
+}
+
+.article-edit-title,
+.article-edit-body {
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px hsl(0, 0%, 90%);
+  display: block;
+  margin: 1rem 0;
+  padding: 0.4em 0.5rem;
+  width: 100%;
+}
+
+.article-edit-title:hover,
+.article-edit-body:hover {
+  box-shadow: 0 0 0 1px hsl(0, 0%, 75%);
+}
+
+.article-edit-title:focus,
+.article-edit-body:focus {
+  box-shadow: 0 0 0 2px var(--bdc);
+  outline: 0;
+}
+
+.article-edit-title {
+  font-size: 2rem;
+}
+
+.article-edit-body {
+  font-family: monospace;
+  font-size: 0.9rem;
+  max-height: 24rem;
+  max-width: 100%;
+  min-height: 12rem;
+}

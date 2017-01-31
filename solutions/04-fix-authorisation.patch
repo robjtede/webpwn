@@ -1,0 +1,82 @@
+From 53b70de648272a362707fbd70516e8bd09d89e6d Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Mon, 1 May 2017 23:51:56 +0100
+Subject: [PATCH] fix authorization issues
+
+---
+ routes/articles.js | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/routes/articles.js b/routes/articles.js
+index 66d9544..40b2ad9 100644
+--- a/routes/articles.js
++++ b/routes/articles.js
+@@ -46,7 +46,7 @@ const list = async ctx => {
+ const nouveau = async ctx => {
+   debug(`rendering new article`)
+ 
+-  verifyLogin(ctx)
++  if (!verifyLogin(ctx)) ctx.throw(403)
+ 
+   await ctx.render('articles/new', {
+     active: 'article'
+@@ -56,6 +56,8 @@ const nouveau = async ctx => {
+ const create = async ctx => {
+   debug(`creating article`)
+ 
++  if (!verifyLogin(ctx)) ctx.throw(403)
++
+   const title = ctx.request.body.title
+   const body = ctx.request.body.body
+   const author = ctx.session.me.id
+@@ -115,7 +117,14 @@ const show = async ctx => {
+ const edit = async ctx => {
+   debug(`rendering edit article ${ctx.params.id}`)
+ 
+-  verifyLogin(ctx)
++  const { id } = verifyLogin(ctx)
++  const authorId = ctx.db.get(oneLine`
++    SELECT author_id
++    FROM articles
++    WHERE id = ?
++  `, [ctx.params.id])
++
++  if (id !== authorId) ctx.throw(403)
+ 
+   const q = oneLine`
+     SELECT *
+@@ -136,6 +145,15 @@ const edit = async ctx => {
+ const update = async ctx => {
+   debug(`updating article ${ctx.params.id}`)
+ 
++  const { id } = verifyLogin(ctx)
++  const authorId = ctx.db.get(oneLine`
++    SELECT author_id
++    FROM articles
++    WHERE id = ?
++  `, [ctx.params.id])
++
++  if (id !== authorId) ctx.throw(403)
++
+   const title = ctx.request.body.title
+   const body = ctx.request.body.body
+ 
+@@ -159,6 +177,15 @@ const update = async ctx => {
+ const remove = async ctx => {
+   debug(`deleting article ${ctx.params.id}`)
+ 
++  const { id } = verifyLogin(ctx)
++  const authorId = ctx.db.get(oneLine`
++    SELECT author_id
++    FROM articles
++    WHERE id = ?
++  `, [ctx.params.id])
++
++  if (id !== authorId) ctx.throw(403)
++
+   const q1 = oneLine`
+     DELETE FROM comments
+     WHERE article_id = ${ctx.params.id}
+-- 
+2.12.2
+

@@ -1,0 +1,34 @@
+.login {
+  margin: 0 auto;
+  max-width: 380px;
+  padding: 1rem;
+}
+
+.login-user,
+.login-pass {
+  border: 1px solid var(--bdc);
+  border-radius: 5px;
+  font-size: 1rem;
+  padding: 0.5em;
+}
+
+.login-user {
+  margin-bottom: 0.5rem;
+}
+
+.login-user-label,
+.login-pass-label {
+  display: inline-block;
+  padding-right: 1ch;
+  width: 10ch;
+}
+
+.login-user-label::after,
+.login-pass-label::after {
+  content: ':';
+}
+
+.login-submit {
+  margin-top: 0.5em;
+  margin-left: 10ch;
+}

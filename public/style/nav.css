@@ -1,0 +1,35 @@
+@import "variables.css";
+
+nav {
+  align-items: center;
+  background-color: hsl(90, 50%, 80%);
+  border-bottom: 1px solid var(--bdc);
+  border-top: 1px solid var(--bdc);
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+
+nav a {
+  border-left: 1px solid var(--bdc);
+  color: black;
+  flex: 1;
+  font-size: 1rem;
+  max-width: 180px;
+  padding: 1em 0;
+  text-align: center;
+  text-decoration: none;
+}
+
+nav a:last-of-type {
+  border-right: 1px solid var(--bdc);
+}
+
+nav a.active {
+  background-color: hsl(90, 60%, 60%);
+}
+
+nav a:hover {
+  background-color: hsl(90, 80%, 60%);
+  text-decoration: none;
+}

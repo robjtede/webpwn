@@ -1,0 +1,74 @@
+From c685b5db7e33f171ef5bdba08a4d5bcfaa648f87 Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Mon, 1 May 2017 14:56:23 +0100
+Subject: [PATCH] fix csrf
+
+---
+ server.js               | 2 +-
+ views/articles/edit.pug | 2 ++
+ views/articles/new.pug  | 2 ++
+ views/articles/show.pug | 1 +
+ views/login.pug         | 2 ++
+ 5 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/server.js b/server.js
+index 5f7c11c..521f44a 100644
+--- a/server.js
++++ b/server.js
+@@ -44,7 +44,7 @@ app.use(bodyparser())
+ app.use(json())
+ app.use(sqlite())
+ app.use(session(app))
+-// app.use(new CSRF())
++app.use(new CSRF())
+ 
+ app.use(serve({
+   root: './public',
+diff --git a/views/articles/edit.pug b/views/articles/edit.pug
+index 50c6a0d..2d41b70 100644
+--- a/views/articles/edit.pug
++++ b/views/articles/edit.pug
+@@ -6,4 +6,6 @@ block main
+ 
+     textarea(name="body" placeholder="Article Body").article-edit-body!= article.body
+ 
++    input(type="hidden" name="_csrf" value=csrf)
++
+     input(type="submit" value="Confirm Edit").article-edit-submit.button
+diff --git a/views/articles/new.pug b/views/articles/new.pug
+index eeb8766..14b4024 100644
+--- a/views/articles/new.pug
++++ b/views/articles/new.pug
+@@ -6,4 +6,6 @@ block main
+ 
+     textarea(name="body" placeholder="Article Body").article-edit-body
+ 
++    input(type="hidden" name="_csrf" value=csrf)
++
+     input(type="submit" value="Confirm Edit").article-edit-submit.button
+diff --git a/views/articles/show.pug b/views/articles/show.pug
+index 5ecc68d..97cc40c 100644
+--- a/views/articles/show.pug
++++ b/views/articles/show.pug
+@@ -24,6 +24,7 @@ block main
+         h3 Add Comment
+         form(method="post" action=`/articles/${article.id}/comments`)
+           textarea(name="body")
++          input(type="hidden" name="_csrf" value=csrf)
+           input(type="submit").button
+ 
+     div.comments
+diff --git a/views/login.pug b/views/login.pug
+index 553206e..364f5c6 100644
+--- a/views/login.pug
++++ b/views/login.pug
+@@ -11,4 +11,6 @@ block main
+     label(for="pass").login-pass-label Password
+     input(type="password" id="pass" name="pass" placeholder="Password").login-pass
+ 
++    input(type="hidden" name="_csrf" value=csrf)
++
+     input(type="submit" id="submit" value="Login").login-submit.button
+-- 
+2.12.2
+

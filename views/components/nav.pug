@@ -1,0 +1,7 @@
+nav
+  +navLink("/", "index", "Home")
+  +navLink("/articles", "article", "Blog")
+  if me
+    +navLink("/profile", "profile", "Profile")
+  else
+    +navLink("/login", "login", "Login")

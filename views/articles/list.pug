@@ -1,0 +1,16 @@
+extends ../layout
+
+block main
+  div.article-list
+    div.page-heading
+      h2 Articles
+
+      if me
+        a(href="/articles/new").button New Article
+
+    for article in articles
+      div.article-item
+        h3.article-item-title: a(href=`/articles/${article.id}`)!= article.title
+        p.article-item-author: a(href=`/user/${article.author}`)!= article.author
+        p.article-item-date= dateDiff(article.created_at)
+        p.article-item-no-comments= article.no_commments

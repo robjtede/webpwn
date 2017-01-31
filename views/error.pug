@@ -1,0 +1,10 @@
+extends layout
+
+block main
+  h1= `Error ${status}`
+  p Looks like something broke!
+  if env == 'development'
+    h2 Message:
+    pre: code= error
+    h2 Stack:
+    pre: code= stack

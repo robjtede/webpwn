@@ -1,0 +1,965 @@
+---
+title: Writing an Intentionally Vulnerable Web App for Teaching
+author: Rob Ede
+date: 3rd May 2017
+toc: true
+lot: true
+lof: true
+papersize: A4
+fontsize: 11pt
+abstract: |
+  Practical security topics are rarely taught alongside web programming and if they are, they often lack the necessary detail and coverage to make a mark in students' minds. This project has been created to make it easier to teach web security concepts by providing vulnerable web app in a white box environment for developers to hack away at, run included test suites and fix the plethora of vulnerabilities that exist in the base system.
+csl: ./harvard.csl
+references:
+- type: webpage
+  title: 'Mailgroup Archives 1997: Server Scripts'
+  id: serverscripts
+  author:
+    family: McCool
+    given: Rob
+  issued:
+    date-parts:
+    - - 1993
+      - 11
+      - 14
+  URL: http://1997.webhistory.org/www.lists/www-talk.1993q4/0485.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013top10
+  title: 'OWASP Top 10 Web Application Vulnerabilities Types'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 23
+  URL: https://www.owasp.org/index.php/Top_10_2013-Top_10
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013top10
+  title: 'Top 10 2013-A1-Injection'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 23
+  URL: https://www.owasp.org/index.php/Top_10_2013-Top_10
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013sqlinjection
+  title: 'Top 10 2013-A1-Injection'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2017
+      - 3
+      - 19
+  URL: https://www.owasp.org/index.php/Top_10_2013-A1-Injection
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owaspsqlinjection
+  title: 'SQL Injection'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2016
+      - 4
+      - 10
+  URL: https://www.owasp.org/index.php/SQL_Injection
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owaspcommandinjection
+  title: 'Command Injection'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2016
+      - 8
+      - 7
+  URL: https://www.owasp.org/index.php/Command_Injection
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013brokenauth
+  title: 'Top 10 2013-A2-Broken Authentication and Session Management'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2017
+      - 3
+      - 19
+  URL: https://www.owasp.org/index.php/Top_10_2013-A2-Broken_Authentication_and_Session_Management
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owaspbrokenauth
+  title: 'Broken Authentication and Session Management'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2010
+      - 4
+      - 22
+  URL: https://www.owasp.org/index.php/Broken_Authentication_and_Session_Management
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013xss
+  title: 'Top 10 2013-A3-Cross-Site Scripting (XSS)'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2017
+      - 3
+      - 19
+  URL: https://www.owasp.org/index.php/Top_10_2013-A3-Cross-Site_Scripting_(XSS)
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owaspxss
+  title: 'Cross Site Scripting (XSS)'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2016
+      - 6
+      - 4
+  URL: https://www.owasp.org/index.php/XSS
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013insecuredor
+  title: 'Top 10 2013-A4-Insecure Direct Object References'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 14
+  URL: https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013misconfig
+  title: 'Top 10 2013-A5-Security Misconfiguration'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 23
+  URL: https://www.owasp.org/index.php/Top_10_2013-A5-Security_Misconfiguration
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013dataexposure
+  title: 'Top 10 2013-A6-Sensitive Data Exposure'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 23
+  URL: https://www.owasp.org/index.php/Top_10_2013-A6-Sensitive_Data_Exposure
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013accesscontrol
+  title: 'Top 10 2013-A7-Missing Function Level Access Control'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2017
+      - 4
+      - 23
+  URL: https://www.owasp.org/index.php/Top_10_2013-A7-Missing_Function_Level_Access_Control
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owaspaccesscontrol
+  title: 'Category:Access Control'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2016
+      - 6
+      - 1
+  URL: https://www.owasp.org/index.php/Guide_to_Authorization
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013csrf
+  title: 'Top 10 2013-A8-Cross-Site Request Forgery (CSRF)'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 10
+      - 18
+  URL: https://www.owasp.org/index.php/Top_10_2013-A8-Cross-Site_Request_Forgery_(CSRF)
+  accessed:
+    date-parts:
+    - - 2016
+      - 4
+      - 6
+
+- type: webpage
+  id: owaspcsrf
+  title: 'Cross-Site Request Forgery (CSRF)'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2017
+      - 3
+      - 22
+  URL: https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013components
+  title: 'Top 10 2013-A9-Using Components with Known Vulnerabilities'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2014
+      - 12
+      - 1
+  URL: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: owasp2013redirects
+  title: 'Top 10 2013-A10-Unvalidated Redirects and Forwards'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2013
+      - 6
+      - 15
+  URL: https://www.owasp.org/index.php/Top_10_2013-A10-Unvalidated_Redirects_and_Forwards
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitresqlinjection
+  title: "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+  publisher: MITRE
+  number: CWE-89
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/89.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitrecommandinjection
+  title: "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+  publisher: MITRE
+  number: CWE-77
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/77.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitreauth
+  title: 'Improper Authentication'
+  publisher: MITRE
+  number: CWE-287
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/287.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitrexss
+  title: "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+  publisher: MITRE
+  number: CWE-79
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 19
+  URL: https://cwe.mitre.org/data/definitions/79.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitreinsecuredor
+  title: 'OWASP Top Ten 2010 Category A4 - Insecure Direct Object References'
+  publisher: MITRE
+  number: CWE-813
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 11
+  URL: https://cwe.mitre.org/data/definitions/813.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitredataexposure
+  title: 'Information Exposure'
+  publisher: MITRE
+  number: CWE-200
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/200.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitrecleartext
+  title: 'Cleartext Storage of Sensitive Information'
+  publisher: MITRE
+  number: CWE-312
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/312.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitrecrypto
+  title: 'Cryptographic Issues'
+  publisher: MITRE
+  number: CWE-310
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/310.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitrecsrf
+  title: 'Cross-Site Request Forgery (CSRF)'
+  publisher: MITRE
+  number: CWE-352
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: https://cwe.mitre.org/data/definitions/352.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitreopenredirect
+  title: "URL Redirection to Untrusted Site ('Open Redirect')"
+  publisher: MITRE
+  number: CWE-601
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 18
+  URL: http://cwe.mitre.org/data/definitions/601.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: entry-dictionary
+  id: mitreheartbleed
+  title: 'CVE-2014-0160'
+  publisher: MITRE
+  number: CVE-2014-0160
+  issued:
+    date-parts:
+    - - 2013
+      - 12
+      - 3
+  URL: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: article-newspaper
+  id: guardianajax
+  title: 'Ajax prepares for battle on the dark side'
+  container-title: 'The Guardian'
+  author:
+    family: Norton
+    given: Quinn
+  issued:
+    date-parts:
+    - - 2006
+      - 3
+      - 9
+  URL: https://www.theguardian.com/media/2006/mar/09/newmedia.technology
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: csp
+  title: 'Content Security Policy Reference'
+  author:
+    family: Foundeo Inc
+  URL: https://content-security-policy.com
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: hackthissite
+  title: 'Hack This Site'
+  URL: https://www.hackthissite.org
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: hackme
+  title: 'Hack.Me'
+  URL: https://hack.me
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: gameofhacks
+  title: 'Game of Hacks'
+  author:
+    family: Checkmarx.com LTD
+  URL: http://www.gameofhacks.com
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: dvwa
+  title: 'Damn Vulnerable Web Application'
+  URL: http://www.dvwa.co.uk
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: hackademic
+  title: 'OWASP Hackademic Challenges Project'
+  author:
+    family: OWASP
+  issued:
+    date-parts:
+    - - 2015
+      - 7
+      - 9
+  URL: https://www.owasp.org/index.php/OWASP_Hackademic_Challenges_Project
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: article
+  id: brewpaper
+  title: 'BREW: A Breakable Web Application for IT-Security Classroom Use'
+  author:
+    - family: Pohl
+      given: Christoph
+    - family: Schlierkamp
+      given: Kathrin
+    - family: Hof
+      given: Hans-Joachim
+  issued:
+    date-parts:
+    - - 2015
+      - 6
+      - 10
+  URL: https://arxiv.org/pdf/1506.03325v1.pdf
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: brewgithub
+  title: 'BREW GitHub Repository'
+  author:
+    - family: Pohl
+      given: Christoph
+    - family: Schlierkamp
+      given: Kathrin
+    - family: Hof
+      given: Hans-Joachim
+  issued:
+    date-parts:
+    - - 2015
+      - 7
+      - 9
+  URL: https://github.com/c00clupea/brew
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: article-journal
+  id: softwarelifecycle
+  title: 'Software Development Life Cycle Models-Comparison, Consequences'
+  author:
+    family: Rastogi
+    given: Vanshika
+  container-title: International Journal of Computer Science and Information Technologies
+  volume: 6
+  issue: 1
+  issued:
+    date-parts:
+    - - 2015
+      - 2
+  URL: http://www.ijcsit.com/docs/Volume 6/vol6issue01/ijcsit2015060137.pdf
+  accessed:
+    date-parts:
+    - - 2017
+      - 4
+      - 29
+
+- type: webpage
+  id: trainingdotcomnodejs
+  title: 'About Node.js, and why you should add Node.js to your skill set?'
+  author:
+    family: TrainingDotCom
+  issued:
+    date-parts:
+    - - 2016
+      - 9
+      - 11
+  URL: http://blog.training.com/2016/09/about-nodejs-and-why-you-should-add.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: w3cjshistory
+  title: 'A Short History of JavaScript'
+  author:
+    family: W3C
+  issued:
+    date-parts:
+    - - 2012
+      - 6
+      - 27
+  URL: https://www.w3.org/community/webed/wiki/A_Short_History_of_JavaScript
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: stackoverflowsurvey2017
+  title: 'Developer Survey Results 2017'
+  author:
+    family: Stack Overflow
+  issued:
+    date-parts:
+    - - 2017
+      - 3
+  URL: https://www.w3.org/community/webed/wiki/A_Short_History_of_JavaScript
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: whatisexpressjs
+  title: 'Express.js: A Server-Side JavaScript Framework'
+  author:
+    family: Wodehouse
+    given: Carey
+  issued:
+    date-parts:
+    - - 2015
+      - 6
+      - 4
+  URL: https://www.upwork.com/hiring/development/express-js-a-server-side-javascript-framework/
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: whatiskoajs
+  title: 'Koa.js: A Future-Proof JavaScript Middleware Framework'
+  author:
+    family: Wodehouse
+    given: Carey
+  issued:
+    date-parts:
+    - - 2015
+      - 7
+      - 20
+  URL: https://www.upwork.com/hiring/development/koa-js-a-future-proof-javascript-middleware-framework/
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: nodejsorg
+  title: 'Node.js'
+  URL: https://nodejs.org/en/
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: expressjs
+  title: 'Express'
+  URL: https://expressjs.com
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: koajs
+  title: 'Koa'
+  URL: http://koajs.com
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: pugjs
+  title: 'Getting Started - Pug'
+  URL: https://pugjs.org/api/getting-started.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: avajs
+  title: 'Ava: Futuristic JavaScript test runner'
+  URL: https://github.com/avajs/ava
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: supertestsession
+  title: 'supertest-session: Persistent sessions for supertest'
+  URL: https://github.com/rjz/supertest-session
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: testcafejs
+  title: 'TestCafe: Automated browser testing for the modern web development stack.press/testcafe'
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: testcafe
+  title: 'TestCafe: Functional Web Testing MADE EASY'
+  URL: https://testcafe.devexpress.com
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: notselenium
+  title: 'Why not use Selenium?'
+  issued:
+    date-parts:
+    - - 2016
+      - 10
+  URL: https://testcafe-discuss.devexpress.com/t/why-not-use-selenium/47
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: dodbcompare
+  title: 'SQLite vs MySQL vs PostgreSQL: A Comparison Of Relational Database Management Systems'
+  publisher: Digital Ocean
+  author:
+    family: Tezer
+    Given: O.S.
+  issued:
+    date-parts:
+    - - 2014
+      - 2
+      - 21
+  URL: https://www.digitalocean.com/community/tutorials/sqlite-vs-mysql-vs-postgresql-a-comparison-of-relational-database-management-systems
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: dadbcompare
+  title: 'MongoDB vs MySQL Comparison: Which Database Is Better?'
+  author:
+    family: DA-14
+  issued:
+    date-parts:
+    - - 2017
+      - 9
+      - 3
+  URL: https://da-14.com/blog/mongodb-vs-mysql-comparison-which-database-better
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: figagile
+  title: 'What is Agile methodology?Disadvantage of waterfall model.'
+  author:
+    family: Srivastava
+    given: Bikesh
+  issued:
+    date-parts:
+    - - 2017
+      - 1
+      - 16
+  URL: https://www.linkedin.com/pulse/what-agile-methodologydisadvantage-waterfall-model-bikesh-srivastava
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: figwaterfall
+  title: 'Case study in system development'
+  author:
+    - family: Lajos
+      given: Kollár
+    - family: Sterbinszky
+      given: Nóra
+  issued:
+    date-parts:
+    - - 2014
+  URL: https://gyires.inf.unideb.hu/GyBITT/07/ch01.html
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: figvshaped
+  title: 'Software Development Life Cycle Models and Methodologies'
+  author:
+    family: Sami
+    given: Mohamed
+  issued:
+    date-parts:
+    - - 2012
+      - 3
+      - 15
+  URL: https://melsatar.blog/2012/03/15/software-development-life-cycle-models-and-methodologies/
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+
+- type: webpage
+  id: figspiral
+  title: 'Boehm’s Spiral Revisited'
+  author:
+    family: Thompson
+    given: Bernie
+  issued:
+    date-parts:
+    - - 2008
+      - 5
+      - 5
+  URL: http://leansoftwareengineering.com/2008/05/05/boehms-spiral-revisited/
+  accessed:
+    date-parts:
+    - - 2017
+      - 5
+      - 2
+---

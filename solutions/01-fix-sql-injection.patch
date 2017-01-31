@@ -1,0 +1,200 @@
+From f1cd646633f2e76d4558c7b102b84fd82a5d6312 Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Fri, 14 Apr 2017 16:40:31 +0100
+Subject: [PATCH 1/2] fix sql injection
+
+---
+ routes/users.js | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/routes/users.js b/routes/users.js
+index 45889d8..c850404 100644
+--- a/routes/users.js
++++ b/routes/users.js
+@@ -40,11 +40,11 @@ const authenticate = async ctx => {
+ 
+   const q = oneLine`
+     SELECT * FROM users
+-    WHERE user='${user}'
+-    AND pass='${pass}'
++    WHERE user=?
++    AND pass=?
+   `
+ 
+-  const acc = await ctx.db.get(q)
++  const acc = await ctx.db.get(q, [user, pass])
+   debug(acc)
+ 
+   if (acc) {
+-- 
+2.12.2
+
+
+From 0e622943a4efec5002e547e717693673ea97b31a Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Tue, 25 Apr 2017 01:55:00 +0100
+Subject: [PATCH 2/2] fix remaining sql vulnerabilities
+
+---
+ routes/articles.js | 32 ++++++++++++++++----------------
+ routes/comments.js |  6 ++----
+ routes/users.js    |  8 ++++----
+ 3 files changed, 22 insertions(+), 24 deletions(-)
+
+diff --git a/routes/articles.js b/routes/articles.js
+index 66d9544..0959867 100644
+--- a/routes/articles.js
++++ b/routes/articles.js
+@@ -64,11 +64,11 @@ const create = async ctx => {
+     INSERT INTO
+     articles (title, body, author_id)
+     VALUES
+-    ('${title}', '${body}', ${author})
++    (?, ?, ?)
+   `
+ 
+   try {
+-    const { lastID } = await ctx.db.run(q)
++    const { lastID } = await ctx.db.run(q, [title, body, author])
+ 
+     if (!lastID) ctx.throw(400, `article was not created`)
+     ctx.redirect(`/articles/${lastID}`)
+@@ -88,19 +88,19 @@ const show = async ctx => {
+     FROM articles
+     INNER JOIN users
+     ON articles.author_id = users.id
+-    WHERE articles.id = ${ctx.params.id}
++    WHERE articles.id = ?
+   `
+   const q2 = oneLine`
+     SELECT comments.id, comments.body, comments.created_at, users.user as author, comments.created_at
+     FROM comments
+     INNER JOIN users
+     ON comments.author_id = users.id
+-    WHERE article_id = ${ctx.params.id}
++    WHERE article_id = ?
+   `
+ 
+   const [article, comments] = await Promise.all([
+-    ctx.db.get(q1),
+-    ctx.db.all(q2)
++    ctx.db.get(q1, [ctx.params.id]),
++    ctx.db.all(q2, [ctx.params.id])
+   ])
+ 
+   if (!article) ctx.throw(404)
+@@ -120,10 +120,10 @@ const edit = async ctx => {
+   const q = oneLine`
+     SELECT *
+     FROM articles
+-    WHERE id = ${ctx.params.id}
++    WHERE id = ?
+   `
+ 
+-  const article = await ctx.db.get(q)
++  const article = await ctx.db.get(q, [ctx.params.id])
+ 
+   if (!article) ctx.throw(404)
+ 
+@@ -141,18 +141,18 @@ const update = async ctx => {
+ 
+   const q = oneLine`
+     UPDATE articles
+-    SET title = '${title}', body = '${body}', updated_at = datetime('now')
+-    WHERE id = ${ctx.params.id}
++    SET title = ?, body = ?, updated_at = datetime('now')
++    WHERE id = ?
+   `
+ 
+   try {
+-    const { changes } = await ctx.db.run(q)
++    const { changes } = await ctx.db.run(q, [title, body, ctx.params.id])
+ 
+     if (!changes) ctx.throw(400, `article ${ctx.params.id} was not updated`)
+     ctx.redirect(`/articles/${ctx.params.id}`)
+   } catch (err) {
+     console.error(err)
+-    ctx.throw(500)
++    ctx.throw(400)
+   }
+ }
+ 
+@@ -161,16 +161,16 @@ const remove = async ctx => {
+ 
+   const q1 = oneLine`
+     DELETE FROM comments
+-    WHERE article_id = ${ctx.params.id}
++    WHERE article_id = ?
+   `
+   const q2 = oneLine`
+     DELETE FROM articles
+-    WHERE id = ${ctx.params.id}
++    WHERE id = ?
+   `
+ 
+   try {
+-    await ctx.db.run(q1)
+-    await ctx.db.run(q2)
++    await ctx.db.run(q1, [ctx.params.id])
++    await ctx.db.run(q2, [ctx.params.id])
+ 
+     ctx.redirect('/articles')
+   } catch (err) {
+diff --git a/routes/comments.js b/routes/comments.js
+index ef8bb05..be6c0af 100644
+--- a/routes/comments.js
++++ b/routes/comments.js
+@@ -28,11 +28,11 @@ const create = async ctx => {
+     INSERT INTO comments
+     (body, author_id, article_id)
+     VALUES
+-    ('${body}', '${author}', '${articleId}')
++    (?, ?, ?)
+   `
+ 
+   try {
+-    const { lastID } = await ctx.db.run(q)
++    const { lastID } = await ctx.db.run(q, [author, body, articleId])
+ 
+     if (!lastID) ctx.throw(400, `comment was not created on article ${ctx.params.id}`)
+     ctx.redirect(`/articles/${articleId}`)
+@@ -40,6 +40,4 @@ const create = async ctx => {
+     console.error(err)
+     ctx.throw(500)
+   }
+-
+-  ctx.redirect(`/articles/${ctx.params.id}`)
+ }
+diff --git a/routes/users.js b/routes/users.js
+index c850404..04fbc51 100644
+--- a/routes/users.js
++++ b/routes/users.js
+@@ -71,7 +71,7 @@ const user = async ctx => {
+ 
+   const q1 = oneLine`
+     SELECT * FROM users
+-    WHERE user='${username}'
++    WHERE user=?
+   `
+ 
+   const q2 = oneLine`
+@@ -79,13 +79,13 @@ const user = async ctx => {
+     FROM users
+     INNER JOIN articles
+     ON users.id = articles.author_id
+-    WHERE user='${username}'
++    WHERE user=?
+   `
+ 
+-  const user = await ctx.db.get(q1)
++  const user = await ctx.db.get(q1, [username])
+   if (!user) ctx.throw(404)
+ 
+-  const articles = await ctx.db.all(q2)
++  const articles = await ctx.db.all(q2, [username])
+ 
+   await ctx.render('user', {
+     active: (me && me.user === username) ? 'profile' : '',
+-- 
+2.12.2
+

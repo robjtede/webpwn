@@ -1,0 +1,141 @@
+From 717f6dcea8c7a143aad6556ad8e503d42452da66 Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Mon, 1 May 2017 15:07:32 +0100
+Subject: [PATCH 1/2] fix xss
+
+---
+ views/articles/edit.pug |  4 ++--
+ views/articles/show.pug | 10 +++++-----
+ views/login.pug         |  2 +-
+ views/user.pug          |  8 ++++----
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/views/articles/edit.pug b/views/articles/edit.pug
+index 50c6a0d..afc32d8 100644
+--- a/views/articles/edit.pug
++++ b/views/articles/edit.pug
+@@ -2,8 +2,8 @@ extends ../layout
+ 
+ block main
+   form(method="post" action=`/articles/${article.id}`)
+-    input(name="title" value!=article.title placeholder="Article Title").article-edit-title
++    input(name="title" value=article.title placeholder="Article Title").article-edit-title
+ 
+-    textarea(name="body" placeholder="Article Body").article-edit-body!= article.body
++    textarea(name="body" placeholder="Article Body").article-edit-body= article.body
+ 
+     input(type="submit" value="Confirm Edit").article-edit-submit.button
+diff --git a/views/articles/show.pug b/views/articles/show.pug
+index 5ecc68d..6e22b19 100644
+--- a/views/articles/show.pug
++++ b/views/articles/show.pug
+@@ -3,15 +3,15 @@ extends ../layout
+ block main
+   article
+     div.page-heading
+-      h1!= article.title
++      h1= article.title
+       if me && me.id === article.author_id
+         form(method="post" action=`/articles/${article.id}/delete`).article-mutate
+           a(href=`/articles/${article.id}/edit`).button Edit Article
+           input(type="submit" value="Delete Article").button
+     div.article-body!= marked(article.body)
+     p.article-author
+-      a(href=`/user/${article.author}`)!= article.author
+-    p.article-date!= articleDate(article.created_at)
++      a(href=`/user/${article.author}`)= article.author
++    p.article-date= articleDate(article.created_at)
+ 
+   div.comments-wrap
+     div.comments-heading
+@@ -30,6 +30,6 @@ block main
+       for comment in comments
+         div.comment
+           p.comment-author
+-            a(href=`/user/${article.author}`)!= comment.author
++            a(href=`/user/${article.author}`)= comment.author
+           p.comment-body!= marked(comment.body)
+-          p.comment-date!= dateDiff(comment.created_at)
++          p.comment-date= dateDiff(comment.created_at)
+diff --git a/views/login.pug b/views/login.pug
+index 553206e..fe0be94 100644
+--- a/views/login.pug
++++ b/views/login.pug
+@@ -2,7 +2,7 @@ extends layout
+ 
+ block main
+   if error
+-    div.error!= error
++    div.error= error
+ 
+   form(method="post").login
+     label(for="user").login-user-label Username
+diff --git a/views/user.pug b/views/user.pug
+index eb7a5ae..79db707 100644
+--- a/views/user.pug
++++ b/views/user.pug
+@@ -2,16 +2,16 @@ extends layout
+ 
+ block main
+   div.page-heading
+-    h2!=`${user.user}'s Profile`
++    h2=`${user.user}'s Profile`
+     if me
+       form(method="post" action="/logout")
+-        input(type="submit" value!=`logout ${me.user}`).button
++        input(type="submit" value=`logout ${me.user}`).button
+ 
+   if articles.length
+     for article in articles
+       div.article-item
+-        h3.article-item-title: a(href=`/articles/${article.id}`)!= article.title
+-        p.article-item-author: a(href=`/user/${article.author}`)!= article.author
++        h3.article-item-title: a(href=`/articles/${article.id}`)= article.title
++        p.article-item-author: a(href=`/user/${article.author}`)= article.author
+         p.article-item-date= dateDiff(article.created_at)
+   else
+     p!= `${user.user} has not posted any articles.`
+-- 
+2.12.2
+
+
+From 61e6e7cae084525bf13509e142fef3ca8fae18b3 Mon Sep 17 00:00:00 2001
+From: Rob Ede <robjtede@icloud.com>
+Date: Mon, 1 May 2017 15:16:23 +0100
+Subject: [PATCH 2/2] fix remaining xss
+
+---
+ views/articles/list.pug | 4 ++--
+ views/helpers.js        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/views/articles/list.pug b/views/articles/list.pug
+index 3090f96..1438095 100644
+--- a/views/articles/list.pug
++++ b/views/articles/list.pug
+@@ -10,7 +10,7 @@ block main
+ 
+     for article in articles
+       div.article-item
+-        h3.article-item-title: a(href=`/articles/${article.id}`)!= article.title
+-        p.article-item-author: a(href=`/user/${article.author}`)!= article.author
++        h3.article-item-title: a(href=`/articles/${article.id}`)= article.title
++        p.article-item-author: a(href=`/user/${article.author}`)= article.author
+         p.article-item-date= dateDiff(article.created_at)
+         p.article-item-no-comments= article.no_commments
+diff --git a/views/helpers.js b/views/helpers.js
+index 9e7a4ef..795899e 100644
+--- a/views/helpers.js
++++ b/views/helpers.js
+@@ -8,7 +8,7 @@ const {
+ 
+ marked.setOptions({
+   // `sanitize: true` will escape all raw HTML syntax
+-  sanitize: false
++  sanitize: true
+ })
+ 
+ const dateDiff = date => distanceInWordsStrict(
+-- 
+2.12.2
+

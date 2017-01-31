@@ -1,0 +1,23 @@
+include mixins
+
+doctype 5
+html(lang="en")
+  head
+    title Average Joe Blogs
+
+    meta(charset="UTF-8")
+    meta(name="viewport", content="initial-scale=1.0, width=device-width")
+
+    block styles
+      link(rel="stylesheet", type="text/css", href="/style/style.css")
+
+    block scripts
+
+
+  body
+    include components/header
+
+    main
+      block main
+
+    include components/footer

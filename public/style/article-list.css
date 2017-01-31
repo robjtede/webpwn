@@ -1,0 +1,44 @@
+.article-item {
+  padding: 1rem;
+}
+
+.article-item:not(:last-child) {
+  border-bottom: 1px solid var(--bdc);
+}
+
+.article-item-title {
+  color: hsl(90, 60%, 30%);
+  font-size: 1.6rem;
+  font-weight: normal;
+  margin: 0;
+}
+
+.article-item-author {
+  color: var(--metac);
+}
+
+.article-item-author::before {
+  content: 'by ';
+}
+
+.article-item-date {
+  color: var(--metac);
+  margin-bottom: 0;
+}
+
+.article-item-date::before {
+  content: 'Posted ';
+}
+
+.article-item-date::after {
+  content: ' ago';
+}
+
+.article-item-no-comments {
+  color: var(--metac);
+  margin-bottom: 0;
+}
+
+.article-item-no-comments::after {
+  content: ' comments';
+}

@@ -1,0 +1,65 @@
+.comments-wrap {
+  background-color: hsl(0, 0%, 97%);
+  border: 1px solid var(--bdc);
+  padding: 1em 0;
+}
+
+.comments-heading {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.comments-heading .button {
+  margin-left: 0.2rem;
+}
+
+.comments-heading h2 {
+  margin: 0.2em 0 0.5em;
+}
+
+.comment {
+  padding: 0.5rem 1rem;
+}
+
+.comment:not(:last-child) {
+  border-bottom: 1px solid var(--bdc);
+}
+
+.comment-author {
+  color: var(--metac);
+}
+
+.comment-author::after {
+  content: ' commented:';
+}
+
+.comment-date {
+  color: var(--metac);
+}
+
+.comment-date::after {
+  content: ' ago';
+}
+
+.add-comment {
+  padding: 0 1rem 1rem;
+}
+
+.add-comment h3 {
+  margin: 0 0 0.5em;
+}
+
+.add-comment textarea {
+  display: block;
+  font-size: 1rem;
+  min-height: 150px;
+  min-width: 350px;
+  width: 50%;
+}
+
+.add-comment input[type="submit"] {
+  margin-top: 0.5rem;
+}

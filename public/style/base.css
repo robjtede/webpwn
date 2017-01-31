@@ -1,0 +1,82 @@
+:root {
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+a {
+  /* color: inherit; */
+  color: var(--linkc);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+p {
+  margin: 0.5em 0 0.8em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+}
+
+form {
+  margin-bottom: 0;
+}
+
+textarea {
+  display: block;
+}
+
+.button {
+  background-color: hsl(90, 60%, 40%);
+  border: 1px solid hsl(90, 60%, 60%);
+  border-radius: 5px;
+  color: white;
+  display: inline-block;
+  min-height: 50px;
+  padding: 0.7em 1em;
+}
+
+.button:hover {
+  background-color: hsl(90, 60%, 45%);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.page-heading {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.page-heading h1,
+.page-heading h2 {
+  margin: 0.4em 0;
+}
+
+.page-heading .button {
+  margin-left: 0.2em;
+}
+
+.error {
+  background-color: hsl(0, 50%, 60%);
+  border: 1px solid hsl(0, 100%, 50%);
+  border-radius: 5px;
+  color: white;
+  padding: 0.5em;
+  text-align: center;
+}

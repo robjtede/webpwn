@@ -1,0 +1,15 @@
+header {
+  background-color: hsl(90, 50%, 65%);
+  position: sticky;
+  top: -85px;
+}
+
+header h1 {
+  color: hsl(90, 100%, 12%);
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 1.6rem;
+  font-weight: normal;
+  margin: 0;
+  padding: 1em 0 0.75em;
+  text-align: center;
+}
