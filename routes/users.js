@@ -40,11 +40,11 @@ const authenticate = async ctx => {
 
   const q = oneLine`
     SELECT * FROM users
-    WHERE user='${user}'
-    AND pass='${pass}'
+    WHERE user=?
+    AND pass=?
   `
 
-  const acc = await ctx.db.get(q)
+  const acc = await ctx.db.get(q, [user, pass])
   debug(acc)
 
   if (acc) {
