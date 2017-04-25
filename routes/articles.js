@@ -64,11 +64,11 @@ const create = async ctx => {
     INSERT INTO
     articles (title, body, author_id)
     VALUES
-    ('${title}', '${body}', ${author})
+    (?, ?, ?)
   `
 
   try {
-    const { lastID } = await ctx.db.run(q)
+    const { lastID } = await ctx.db.run(q, [title, body, author])
 
     if (!lastID) ctx.throw(400, `article was not created`)
     ctx.redirect(`/articles/${lastID}`)
@@ -88,19 +88,19 @@ const show = async ctx => {
     FROM articles
     INNER JOIN users
     ON articles.author_id = users.id
-    WHERE articles.id = ${ctx.params.id}
+    WHERE articles.id = ?
   `
   const q2 = oneLine`
     SELECT comments.id, comments.body, comments.created_at, users.user as author, comments.created_at
     FROM comments
     INNER JOIN users
     ON comments.author_id = users.id
-    WHERE article_id = ${ctx.params.id}
+    WHERE article_id = ?
   `
 
   const [article, comments] = await Promise.all([
-    ctx.db.get(q1),
-    ctx.db.all(q2)
+    ctx.db.get(q1, [ctx.params.id]),
+    ctx.db.all(q2, [ctx.params.id])
   ])
 
   if (!article) ctx.throw(404)
@@ -120,10 +120,10 @@ const edit = async ctx => {
   const q = oneLine`
     SELECT *
     FROM articles
-    WHERE id = ${ctx.params.id}
+    WHERE id = ?
   `
 
-  const article = await ctx.db.get(q)
+  const article = await ctx.db.get(q, [ctx.params.id])
 
   if (!article) ctx.throw(404)
 
@@ -141,18 +141,18 @@ const update = async ctx => {
 
   const q = `
     UPDATE articles
-    SET title = '${title}', body = '${body}', updated_at = datetime('now')
-    WHERE id = ${ctx.params.id}
+    SET title = ?, body = ?, updated_at = datetime('now')
+    WHERE id = ?
   `
 
   try {
-    const { changes } = await ctx.db.run(q)
+    const { changes } = await ctx.db.run(q, [title, body, ctx.params.id])
 
     if (!changes) ctx.throw(400, `article ${ctx.params.id} was not updated`)
     ctx.redirect(`/articles/${ctx.params.id}`)
   } catch (err) {
     console.error(err)
-    ctx.throw(500)
+    ctx.throw(400)
   }
 }
 
@@ -161,16 +161,16 @@ const remove = async ctx => {
 
   const q1 = oneLine`
     DELETE FROM comments
-    WHERE article_id = ${ctx.params.id}
+    WHERE article_id = ?
   `
   const q2 = oneLine`
     DELETE FROM articles
-    WHERE id = ${ctx.params.id}
+    WHERE id = ?
   `
 
   try {
-    await ctx.db.run(q1)
-    await ctx.db.run(q2)
+    await ctx.db.run(q1, [ctx.params.id])
+    await ctx.db.run(q2, [ctx.params.id])
 
     ctx.redirect('/articles')
   } catch (err) {

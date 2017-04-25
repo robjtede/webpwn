@@ -28,11 +28,11 @@ const create = async ctx => {
     INSERT INTO comments
     (body, author_id, article_id)
     VALUES
-    ('${body}', '${author}', '${articleId}')
+    (?, ?, ?)
   `
 
   try {
-    const { lastID } = await ctx.db.run(q)
+    const { lastID } = await ctx.db.run(q, [body, author, articleId])
 
     if (!lastID) ctx.throw(400, `comment was not created on article ${ctx.params.id}`)
     ctx.redirect(`/articles/${articleId}`)
@@ -40,6 +40,4 @@ const create = async ctx => {
     console.error(err)
     ctx.throw(500)
   }
-
-  ctx.redirect(`/articles/${ctx.params.id}`)
 }

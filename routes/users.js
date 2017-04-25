@@ -71,7 +71,7 @@ const user = async ctx => {
 
   const q1 = oneLine`
     SELECT * FROM users
-    WHERE user='${username}'
+    WHERE user=?
   `
 
   const q2 = oneLine`
@@ -79,13 +79,13 @@ const user = async ctx => {
     FROM users
     INNER JOIN articles
     ON users.id = articles.author_id
-    WHERE user='${username}'
+    WHERE user=?
   `
 
-  const user = await ctx.db.get(q1)
+  const user = await ctx.db.get(q1, [username])
   if (!user) ctx.throw(404)
 
-  const articles = await ctx.db.all(q2)
+  const articles = await ctx.db.all(q2, [username])
 
   await ctx.render('user', {
     active: (me && me.user === username) ? 'profile' : '',
