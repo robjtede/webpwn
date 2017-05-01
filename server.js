@@ -44,7 +44,7 @@ app.use(bodyparser())
 app.use(json())
 app.use(sqlite())
 app.use(session(app))
-// app.use(new CSRF())
+app.use(new CSRF())
 
 app.use(serve({
   root: './public',

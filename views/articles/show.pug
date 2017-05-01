@@ -24,6 +24,7 @@ block main
         h3 Add Comment
         form(method="post" action=`/articles/${article.id}/comments`)
           textarea(name="body")
+          input(type="hidden" name="_csrf" value=csrf)
           input(type="submit").button
 
     div.comments

@@ -6,4 +6,6 @@ block main
 
     textarea(name="body" placeholder="Article Body").article-edit-body!= article.body
 
+    input(type="hidden" name="_csrf" value=csrf)
+
     input(type="submit" value="Confirm Edit").article-edit-submit.button

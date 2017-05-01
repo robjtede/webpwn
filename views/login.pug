@@ -11,4 +11,6 @@ block main
     label(for="pass").login-pass-label Password
     input(type="password" id="pass" name="pass" placeholder="Password").login-pass
 
+    input(type="hidden" name="_csrf" value=csrf)
+
     input(type="submit" id="submit" value="Login").login-submit.button
