@@ -1,5 +1,11 @@
 'use strict'
 
+const {
+  genSalt,
+  hash,
+  compare
+} = require('bcryptjs')
+
 const Debug = require('debug')
 const debug = new Debug('app:routes/login.js')
 
@@ -41,13 +47,12 @@ const authenticate = async ctx => {
   const q = oneLine`
     SELECT * FROM users
     WHERE user='${user}'
-    AND pass='${pass}'
   `
 
   const acc = await ctx.db.get(q)
   debug(acc)
 
-  if (acc) {
+  if (acc && await compare(pass, acc.pass)) {
     ctx.session.me = {
       id: acc.id,
       user: acc.user
