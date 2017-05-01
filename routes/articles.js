@@ -46,7 +46,7 @@ const list = async ctx => {
 const nouveau = async ctx => {
   debug(`rendering new article`)
 
-  verifyLogin(ctx)
+  if (!verifyLogin(ctx)) ctx.throw(403)
 
   await ctx.render('articles/new', {
     active: 'article'
@@ -55,6 +55,8 @@ const nouveau = async ctx => {
 
 const create = async ctx => {
   debug(`creating article`)
+
+  if (!verifyLogin(ctx)) ctx.throw(403)
 
   const title = ctx.request.body.title
   const body = ctx.request.body.body
@@ -115,7 +117,15 @@ const show = async ctx => {
 const edit = async ctx => {
   debug(`rendering edit article ${ctx.params.id}`)
 
-  verifyLogin(ctx)
+  const { id } = verifyLogin(ctx)
+  const articleCheck = await ctx.db.get(oneLine`
+    SELECT author_id
+    FROM articles
+    WHERE id = ?
+  `, [ctx.params.id])
+
+  if (!articleCheck) ctx.throw(400)
+  if (id !== articleCheck.author_id) ctx.throw(403)
 
   const q = oneLine`
     SELECT *
@@ -135,6 +145,16 @@ const edit = async ctx => {
 
 const update = async ctx => {
   debug(`updating article ${ctx.params.id}`)
+
+  const { id } = verifyLogin(ctx)
+  const articleCheck = await ctx.db.get(oneLine`
+    SELECT author_id
+    FROM articles
+    WHERE id = ?
+  `, [ctx.params.id])
+
+  if (!articleCheck) ctx.throw(400)
+  if (id !== articleCheck.author_id) ctx.throw(403)
 
   const title = ctx.request.body.title
   const body = ctx.request.body.body
@@ -158,6 +178,16 @@ const update = async ctx => {
 
 const remove = async ctx => {
   debug(`deleting article ${ctx.params.id}`)
+
+  const { id } = verifyLogin(ctx)
+  const articleCheck = await ctx.db.get(oneLine`
+    SELECT author_id
+    FROM articles
+    WHERE id = ?
+  `, [ctx.params.id])
+
+  if (!articleCheck) ctx.throw(400)
+  if (id !== articleCheck.author_id) ctx.throw(403)
 
   const q1 = oneLine`
     DELETE FROM comments
