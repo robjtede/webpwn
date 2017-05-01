@@ -8,7 +8,7 @@ const {
 
 marked.setOptions({
   // `sanitize: true` will escape all raw HTML syntax
-  sanitize: false
+  sanitize: true
 })
 
 const dateDiff = date => distanceInWordsStrict(
