@@ -2,16 +2,16 @@ extends layout
 
 block main
   div.page-heading
-    h2!=`${user.user}'s Profile`
+    h2=`${user.user}'s Profile`
     if me
       form(method="post" action="/logout")
-        input(type="submit" value!=`logout ${me.user}`).button
+        input(type="submit" value=`logout ${me.user}`).button
 
   if articles.length
     for article in articles
       div.article-item
-        h3.article-item-title: a(href=`/articles/${article.id}`)!= article.title
-        p.article-item-author: a(href=`/user/${article.author}`)!= article.author
+        h3.article-item-title: a(href=`/articles/${article.id}`)= article.title
+        p.article-item-author: a(href=`/user/${article.author}`)= article.author
         p.article-item-date= dateDiff(article.created_at)
   else
     p!= `${user.user} has not posted any articles.`

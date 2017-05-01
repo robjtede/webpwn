@@ -2,7 +2,7 @@ extends layout
 
 block main
   if error
-    div.error!= error
+    div.error= error
 
   form(method="post").login
     label(for="user").login-user-label Username

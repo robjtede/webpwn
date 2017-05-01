@@ -3,15 +3,15 @@ extends ../layout
 block main
   article
     div.page-heading
-      h1!= article.title
+      h1= article.title
       if me && me.id === article.author_id
         form(method="post" action=`/articles/${article.id}/delete`).article-mutate
           a(href=`/articles/${article.id}/edit`).button Edit Article
           input(type="submit" value="Delete Article").button
     div.article-body!= marked(article.body)
     p.article-author
-      a(href=`/user/${article.author}`)!= article.author
-    p.article-date!= articleDate(article.created_at)
+      a(href=`/user/${article.author}`)= article.author
+    p.article-date= articleDate(article.created_at)
 
   div.comments-wrap
     div.comments-heading
@@ -30,6 +30,6 @@ block main
       for comment in comments
         div.comment
           p.comment-author
-            a(href=`/user/${article.author}`)!= comment.author
+            a(href=`/user/${article.author}`)= comment.author
           p.comment-body!= marked(comment.body)
-          p.comment-date!= dateDiff(comment.created_at)
+          p.comment-date= dateDiff(comment.created_at)

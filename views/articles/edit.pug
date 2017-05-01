@@ -2,8 +2,8 @@ extends ../layout
 
 block main
   form(method="post" action=`/articles/${article.id}`)
-    input(name="title" value!=article.title placeholder="Article Title").article-edit-title
+    input(name="title" value=article.title placeholder="Article Title").article-edit-title
 
-    textarea(name="body" placeholder="Article Body").article-edit-body!= article.body
+    textarea(name="body" placeholder="Article Body").article-edit-body= article.body
 
     input(type="submit" value="Confirm Edit").article-edit-submit.button
