@@ -142,7 +142,7 @@ test('articles: edit => cause server error via SQL injection', async t => {
   const res = await t.context.agent
     .get(`/articles/'/edit`)
 
-  t.is(res.status, 404, 'SQL injection should not cause server error')
+  t.is(res.status, 400, 'SQL injection should not cause server error')
 })
 
 test.serial('articles: update => cause server error via SQL injection', async t => {
@@ -173,7 +173,7 @@ test.serial('articles: remove => cause server error via SQL injection', async t 
       _csrf: t.context.token
     })
 
-  t.is(res.status, 302, 'SQL injection should not cause server error')
+  t.is(res.status, 400, 'SQL injection should not cause server error')
   // TODO: redirect to where
 })
 
