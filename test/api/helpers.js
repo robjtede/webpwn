@@ -1,7 +1,10 @@
 'use strict'
 
 const sqlite3 = require('co-sqlite3')
-const { genSalt, hash } = require('bcryptjs')
+const {
+  genSalt,
+  hash
+} = require('bcryptjs')
 
 let sql = null
 

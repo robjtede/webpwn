@@ -4,7 +4,8 @@ const { test } = require('ava')
 const request = require('supertest-session')
 
 const {
-  getDB
+  getDB,
+  getHash
 } = require('./helpers')
 
 const server = require('../../server')
@@ -18,12 +19,14 @@ test.before('setup server', async t => {
 
 test.before('seed database', async t => {
   const db = await getDB()
+  const hashadmin = await getHash('nimda')
+  const hashuser = await getHash('resu')
 
   await db.run('DELETE FROM comments')
   await db.run('DELETE FROM articles')
   await db.run('DELETE FROM users')
-  await db.run('INSERT INTO users (id, user, pass, admin) VALUES (?, ?, ?, ?)', [1, 'admin', 'nimda', 1])
-  await db.run('INSERT INTO users (id, user, pass, admin) VALUES (?, ?, ?, ?)', [2, 'user', 'resu', 0])
+  await db.run('INSERT INTO users (id, user, pass, admin) VALUES (?, ?, ?, ?)', [1, 'admin', hashadmin, 1])
+  await db.run('INSERT INTO users (id, user, pass, admin) VALUES (?, ?, ?, ?)', [2, 'user', hashuser, 0])
 })
 
 test.beforeEach('get csrf token', async t => {
